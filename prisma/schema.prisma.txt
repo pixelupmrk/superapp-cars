@@ -1,0 +1,39 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Loja {
+  id        String   @id @default(uuid())
+  nome      String
+  email     String   @unique
+  senha     String
+  whatsapp  String   // Número vinculado ao BOT
+  carros    Carro[]
+  leads     Lead[]
+}
+
+model Carro {
+  id          String   @id @default(uuid())
+  marca       String
+  modelo      String
+  ano         Int
+  preco       Float
+  imagemUrl   String?
+  lojaId      String
+  loja        Loja     @relation(fields: [lojaId], references: [id])
+}
+
+model Lead {
+  id          String   @id @default(uuid())
+  nomeCliente String
+  telCliente  String
+  status      String   @default("ABERTO") // ABERTO, AGENDADO, VENDIDO
+  lojaId      String
+  loja        Loja     @relation(fields: [lojaId], references: [id])
+  createdAt   DateTime @default(now())
+}
